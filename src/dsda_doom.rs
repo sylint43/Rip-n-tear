@@ -15,11 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with rnt.  If not, see <http://www.gnu.org/licenses/>.
 
+use std::{iter::once, path::PathBuf};
+
 struct DsdaArgs {
     warp: Option<u8>,
     renderer: Option<Renderer>,
     skill: Option<Skill>,
     pistolstart: bool,
+    files: Vec<PathBuf>,
+    extra: Vec<String>,
 }
 
 enum Renderer {
@@ -62,6 +66,8 @@ fn generate_arguments(args: DsdaArgs) -> Vec<String> {
         renderer,
         skill,
         pistolstart,
+        files,
+        extra,
     } = args;
 
     let warp = warp.map_or(vec![], |lvl| vec!["-warp".to_string(), lvl.to_string()]);
@@ -72,11 +78,24 @@ fn generate_arguments(args: DsdaArgs) -> Vec<String> {
     } else {
         vec![]
     };
+    let files = if !files.is_empty() {
+        once("-file".to_string())
+            .chain(
+                files
+                    .into_iter()
+                    .map(|path| path.to_string_lossy().to_string()),
+            )
+            .collect()
+    } else {
+        vec![]
+    };
 
     warp.into_iter()
         .chain(renderer)
         .chain(skill)
         .chain(pistolstart)
+        .chain(files)
+        .chain(extra)
         .collect()
 }
 
@@ -91,8 +110,22 @@ mod tests {
             renderer: Some(Renderer::Software),
             skill: Some(Skill::VeryHard),
             pistolstart: true,
+            files: vec![PathBuf::from("test.wad"), PathBuf::from("test2.wad")],
+            extra: vec!["-extra".to_string()],
         };
-        let expected = ["-warp", "1", "-vid", "sw", "-skill", "4", "-pistolstart"];
+        let expected = [
+            "-warp",
+            "1",
+            "-vid",
+            "sw",
+            "-skill",
+            "4",
+            "-pistolstart",
+            "-file",
+            "test.wad",
+            "test2.wad",
+            "-extra",
+        ];
 
         let actual = generate_arguments(args);
 
@@ -106,6 +139,8 @@ mod tests {
             renderer: None,
             skill: None,
             pistolstart: false,
+            files: vec![],
+            extra: vec![],
         };
         let expected: [&str; 0] = [];
 
