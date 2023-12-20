@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with rnt.  If not, see <http://www.gnu.org/licenses/>.
 
-use std::{iter::once, path::PathBuf};
+use std::{fmt::Display, iter::once, path::PathBuf};
 
 struct DsdaArgs {
     warp: Option<u8>,
@@ -39,23 +39,23 @@ enum Skill {
     Nightmare,
 }
 
-impl From<Skill> for String {
-    fn from(value: Skill) -> Self {
-        match value {
-            Skill::Easy => "1".into(),
-            Skill::Medium => "2".into(),
-            Skill::Hard => "3".into(),
-            Skill::VeryHard => "4".into(),
-            Skill::Nightmare => "5".into(),
+impl Display for Skill {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Skill::Easy => 1.fmt(f),
+            Skill::Medium => 2.fmt(f),
+            Skill::Hard => 3.fmt(f),
+            Skill::VeryHard => 4.fmt(f),
+            Skill::Nightmare => 5.fmt(f),
         }
     }
 }
 
-impl From<Renderer> for String {
-    fn from(value: Renderer) -> Self {
-        match value {
-            Renderer::Software => "sw".to_string(),
-            Renderer::OpenGL => "gl".to_string(),
+impl Display for Renderer {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Renderer::Software => "sw".fmt(f),
+            Renderer::OpenGL => "gl".fmt(f),
         }
     }
 }
@@ -71,8 +71,12 @@ fn generate_arguments(args: DsdaArgs) -> Vec<String> {
     } = args;
 
     let warp = warp.map_or(vec![], |lvl| vec!["-warp".to_string(), lvl.to_string()]);
-    let renderer = renderer.map_or(vec![], |renderer| vec!["-vid".to_string(), renderer.into()]);
-    let skill = skill.map_or(vec![], |skill| vec!["-skill".to_string(), skill.into()]);
+    let renderer = renderer.map_or(vec![], |renderer| {
+        vec!["-vid".to_string(), renderer.to_string()]
+    });
+    let skill = skill.map_or(vec![], |skill| {
+        vec!["-skill".to_string(), skill.to_string()]
+    });
     let pistolstart = if pistolstart {
         vec!["-pistolstart".to_string()]
     } else {
