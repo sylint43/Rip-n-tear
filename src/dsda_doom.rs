@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with rnt.  If not, see <http://www.gnu.org/licenses/>.
 
-use std::{fmt::Display, iter::once, path::PathBuf};
+use std::{ffi::OsString, iter::once, path::PathBuf};
 
 struct DsdaArgs {
     warp: Option<u8>,
@@ -23,7 +23,7 @@ struct DsdaArgs {
     skill: Option<Skill>,
     pistolstart: bool,
     files: Vec<PathBuf>,
-    extra: Vec<String>,
+    extra: Vec<OsString>,
 }
 
 enum Renderer {
@@ -39,28 +39,28 @@ enum Skill {
     Nightmare,
 }
 
-impl Display for Skill {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Skill::Easy => 1.fmt(f),
-            Skill::Medium => 2.fmt(f),
-            Skill::Hard => 3.fmt(f),
-            Skill::VeryHard => 4.fmt(f),
-            Skill::Nightmare => 5.fmt(f),
+impl From<Skill> for OsString {
+    fn from(value: Skill) -> Self {
+        match value {
+            Skill::Easy => "1".into(),
+            Skill::Medium => "2".into(),
+            Skill::Hard => "3".into(),
+            Skill::VeryHard => "4".into(),
+            Skill::Nightmare => "5".into(),
         }
     }
 }
 
-impl Display for Renderer {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Renderer::Software => "sw".fmt(f),
-            Renderer::OpenGL => "gl".fmt(f),
+impl From<Renderer> for OsString {
+    fn from(value: Renderer) -> Self {
+        match value {
+            Renderer::Software => "sw".into(),
+            Renderer::OpenGL => "gl".into(),
         }
     }
 }
 
-fn generate_arguments(args: DsdaArgs) -> Vec<String> {
+fn generate_arguments(args: DsdaArgs) -> Vec<OsString> {
     let DsdaArgs {
         warp,
         renderer,
@@ -70,25 +70,17 @@ fn generate_arguments(args: DsdaArgs) -> Vec<String> {
         extra,
     } = args;
 
-    let warp = warp.map_or(vec![], |lvl| vec!["-warp".to_string(), lvl.to_string()]);
-    let renderer = renderer.map_or(vec![], |renderer| {
-        vec!["-vid".to_string(), renderer.to_string()]
-    });
-    let skill = skill.map_or(vec![], |skill| {
-        vec!["-skill".to_string(), skill.to_string()]
-    });
+    let warp = warp.map_or(vec![], |lvl| vec!["-warp".into(), lvl.to_string().into()]);
+    let renderer = renderer.map_or(vec![], |renderer| vec!["-vid".into(), renderer.into()]);
+    let skill = skill.map_or(vec![], |skill| vec!["-skill".into(), skill.into()]);
     let pistolstart = if pistolstart {
-        vec!["-pistolstart".to_string()]
+        vec!["-pistolstart".into()]
     } else {
         vec![]
     };
     let files = if !files.is_empty() {
-        once("-file".to_string())
-            .chain(
-                files
-                    .into_iter()
-                    .map(|path| path.to_string_lossy().to_string()),
-            )
+        once("-file".into())
+            .chain(files.into_iter().map(|path| path.into_os_string()))
             .collect()
     } else {
         vec![]
@@ -115,7 +107,7 @@ mod tests {
             skill: Some(Skill::VeryHard),
             pistolstart: true,
             files: vec![PathBuf::from("test.wad"), PathBuf::from("test2.wad")],
-            extra: vec!["-extra".to_string()],
+            extra: vec!["-extra".into()],
         };
         let expected = [
             "-warp",
