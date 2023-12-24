@@ -18,9 +18,11 @@
 use std::{ffi::OsString, iter::once, path::PathBuf};
 
 struct DsdaArgs {
+    iwad: PathBuf,
     warp: Option<u8>,
     renderer: Option<Renderer>,
     skill: Option<Skill>,
+    complevel: Option<Complevel>,
     pistolstart: bool,
     files: Vec<PathBuf>,
     extra: Vec<OsString>,
@@ -37,6 +39,15 @@ enum Skill {
     Hard,
     VeryHard,
     Nightmare,
+}
+
+enum Complevel {
+    Doom19,
+    UDoom,
+    FinalDoom,
+    Boom,
+    MBF,
+    MBF21,
 }
 
 impl From<Skill> for OsString {
@@ -60,19 +71,38 @@ impl From<Renderer> for OsString {
     }
 }
 
+impl From<Complevel> for OsString {
+    fn from(value: Complevel) -> Self {
+        match value {
+            Complevel::Doom19 => "2".into(),
+            Complevel::UDoom => "3".into(),
+            Complevel::FinalDoom => "4".into(),
+            Complevel::Boom => "9".into(),
+            Complevel::MBF => "11".into(),
+            Complevel::MBF21 => "21".into(),
+        }
+    }
+}
+
 fn generate_arguments(args: DsdaArgs) -> Vec<OsString> {
     let DsdaArgs {
+        iwad,
         warp,
         renderer,
         skill,
+        complevel,
         pistolstart,
         files,
         extra,
     } = args;
 
+    let iwad = vec!["-iwad".into(), iwad.into_os_string()];
     let warp = warp.map_or(vec![], |lvl| vec!["-warp".into(), lvl.to_string().into()]);
     let renderer = renderer.map_or(vec![], |renderer| vec!["-vid".into(), renderer.into()]);
     let skill = skill.map_or(vec![], |skill| vec!["-skill".into(), skill.into()]);
+    let complevel = complevel.map_or(vec![], |complevel| {
+        vec!["-complevel".into(), complevel.into()]
+    });
     let pistolstart = if pistolstart {
         vec!["-pistolstart".into()]
     } else {
@@ -86,9 +116,11 @@ fn generate_arguments(args: DsdaArgs) -> Vec<OsString> {
         vec![]
     };
 
-    warp.into_iter()
+    iwad.into_iter()
+        .chain(warp)
         .chain(renderer)
         .chain(skill)
+        .chain(complevel)
         .chain(pistolstart)
         .chain(files)
         .chain(extra)
@@ -102,20 +134,26 @@ mod tests {
     #[test]
     fn test_should_generate_valid_dsda_cli_arguments() {
         let args = DsdaArgs {
+            iwad: PathBuf::from("doom2.wad"),
             warp: Some(1),
             renderer: Some(Renderer::Software),
             skill: Some(Skill::VeryHard),
+            complevel: Some(Complevel::Doom19),
             pistolstart: true,
             files: vec![PathBuf::from("test.wad"), PathBuf::from("test2.wad")],
             extra: vec!["-extra".into()],
         };
         let expected = [
+            "-iwad",
+            "doom2.wad",
             "-warp",
             "1",
             "-vid",
             "sw",
             "-skill",
             "4",
+            "-complevel",
+            "2",
             "-pistolstart",
             "-file",
             "test.wad",
@@ -131,14 +169,16 @@ mod tests {
     #[test]
     fn test_should_return_default_arguments() {
         let args = DsdaArgs {
+            iwad: PathBuf::from("doom2.wad"),
             warp: None,
             renderer: None,
             skill: None,
+            complevel: None,
             pistolstart: false,
             files: vec![],
             extra: vec![],
         };
-        let expected: [&str; 0] = [];
+        let expected = ["-iwad", "doom2.wad"];
 
         let actual = generate_arguments(args);
 
