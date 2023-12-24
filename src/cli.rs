@@ -28,7 +28,7 @@ pub struct Cli {
     #[arg(long)]
     iwad: PathBuf,
     /// Warp to level at start
-    #[arg(long, short)]
+    #[arg(long, short, value_name = "LEVEL")]
     warp: Option<u8>,
     /// Set graphics renderer
     #[arg(long = "vid", short = 'v', value_enum)]
@@ -43,10 +43,10 @@ pub struct Cli {
     #[arg(long, short)]
     pistolstart: bool,
     /// Paths to PWads to use
-    #[arg(long, short)]
+    #[arg(long, short, value_name = "PATH...")]
     files: Vec<PathBuf>,
     /// Extra command line aruguments
-    #[arg(long, short, value_name = "EXTRA ARGS")]
+    #[arg(long, short, value_name = "EXTRA ARGS...")]
     extra: Vec<OsString>,
 }
 
