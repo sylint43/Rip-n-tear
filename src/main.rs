@@ -15,6 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with rnt.  If not, see <http://www.gnu.org/licenses/>.
 
+use std::process::Command;
+
+use clap::Parser;
+use rnt::{cli::Cli, dsda_doom::DsdaArgs};
+
 fn main() {
-    println!("Hello, world!");
+    let cli = Cli::parse();
+    let args = DsdaArgs::from(cli).generate_arguments();
+
+    Command::new("dsda-doom")
+        .args(args)
+        .spawn()
+        .expect("Failed to launch dsda-doom");
 }
