@@ -17,23 +17,27 @@
 
 use std::{ffi::OsString, iter::once, path::PathBuf};
 
-struct DsdaArgs {
-    iwad: PathBuf,
-    warp: Option<u8>,
-    renderer: Option<Renderer>,
-    skill: Option<Skill>,
-    complevel: Option<Complevel>,
-    pistolstart: bool,
-    files: Vec<PathBuf>,
-    extra: Vec<OsString>,
+use clap::ValueEnum;
+
+pub struct DsdaArgs {
+    pub iwad: PathBuf,
+    pub warp: Option<u8>,
+    pub renderer: Option<Renderer>,
+    pub skill: Option<Skill>,
+    pub complevel: Option<Complevel>,
+    pub pistolstart: bool,
+    pub files: Vec<PathBuf>,
+    pub extra: Vec<OsString>,
 }
 
-enum Renderer {
+#[derive(Debug, Clone, Copy, ValueEnum)]
+pub enum Renderer {
     Software,
     OpenGL,
 }
 
-enum Skill {
+#[derive(Debug, Clone, Copy, ValueEnum)]
+pub enum Skill {
     Easy,
     Medium,
     Hard,
@@ -41,13 +45,14 @@ enum Skill {
     Nightmare,
 }
 
-enum Complevel {
+#[derive(Debug, Clone, Copy, ValueEnum)]
+pub enum Complevel {
     Doom19,
     UDoom,
     FinalDoom,
     Boom,
-    MBF,
-    MBF21,
+    Mbf,
+    Mbf21,
 }
 
 impl From<Skill> for OsString {
@@ -78,53 +83,55 @@ impl From<Complevel> for OsString {
             Complevel::UDoom => "3".into(),
             Complevel::FinalDoom => "4".into(),
             Complevel::Boom => "9".into(),
-            Complevel::MBF => "11".into(),
-            Complevel::MBF21 => "21".into(),
+            Complevel::Mbf => "11".into(),
+            Complevel::Mbf21 => "21".into(),
         }
     }
 }
 
-fn generate_arguments(args: DsdaArgs) -> Vec<OsString> {
-    let DsdaArgs {
-        iwad,
-        warp,
-        renderer,
-        skill,
-        complevel,
-        pistolstart,
-        files,
-        extra,
-    } = args;
+impl DsdaArgs {
+    pub fn generate_arguments(self) -> Vec<OsString> {
+        let DsdaArgs {
+            iwad,
+            warp,
+            renderer,
+            skill,
+            complevel,
+            pistolstart,
+            files,
+            extra,
+        } = self;
 
-    let iwad = vec!["-iwad".into(), iwad.into_os_string()];
-    let warp = warp.map_or(vec![], |lvl| vec!["-warp".into(), lvl.to_string().into()]);
-    let renderer = renderer.map_or(vec![], |renderer| vec!["-vid".into(), renderer.into()]);
-    let skill = skill.map_or(vec![], |skill| vec!["-skill".into(), skill.into()]);
-    let complevel = complevel.map_or(vec![], |complevel| {
-        vec!["-complevel".into(), complevel.into()]
-    });
-    let pistolstart = if pistolstart {
-        vec!["-pistolstart".into()]
-    } else {
-        vec![]
-    };
-    let files = if !files.is_empty() {
-        once("-file".into())
-            .chain(files.into_iter().map(|path| path.into_os_string()))
+        let iwad = vec!["-iwad".into(), iwad.into_os_string()];
+        let warp = warp.map_or(vec![], |lvl| vec!["-warp".into(), lvl.to_string().into()]);
+        let renderer = renderer.map_or(vec![], |renderer| vec!["-vid".into(), renderer.into()]);
+        let skill = skill.map_or(vec![], |skill| vec!["-skill".into(), skill.into()]);
+        let complevel = complevel.map_or(vec![], |complevel| {
+            vec!["-complevel".into(), complevel.into()]
+        });
+        let pistolstart = if pistolstart {
+            vec!["-pistolstart".into()]
+        } else {
+            vec![]
+        };
+        let files = if !files.is_empty() {
+            once("-file".into())
+                .chain(files.into_iter().map(|path| path.into_os_string()))
+                .collect()
+        } else {
+            vec![]
+        };
+
+        iwad.into_iter()
+            .chain(warp)
+            .chain(renderer)
+            .chain(skill)
+            .chain(complevel)
+            .chain(pistolstart)
+            .chain(files)
+            .chain(extra)
             .collect()
-    } else {
-        vec![]
-    };
-
-    iwad.into_iter()
-        .chain(warp)
-        .chain(renderer)
-        .chain(skill)
-        .chain(complevel)
-        .chain(pistolstart)
-        .chain(files)
-        .chain(extra)
-        .collect()
+    }
 }
 
 #[cfg(test)]
@@ -161,7 +168,7 @@ mod tests {
             "-extra",
         ];
 
-        let actual = generate_arguments(args);
+        let actual = args.generate_arguments();
 
         assert_eq!(actual, expected);
     }
@@ -180,7 +187,7 @@ mod tests {
         };
         let expected = ["-iwad", "doom2.wad"];
 
-        let actual = generate_arguments(args);
+        let actual = args.generate_arguments();
 
         assert_eq!(actual, expected);
     }
