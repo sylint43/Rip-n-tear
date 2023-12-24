@@ -90,8 +90,9 @@ impl From<Complevel> for OsString {
 }
 
 impl DsdaArgs {
+    #[must_use]
     pub fn generate_arguments(self) -> Vec<OsString> {
-        let DsdaArgs {
+        let Self {
             iwad,
             warp,
             renderer,
@@ -114,12 +115,12 @@ impl DsdaArgs {
         } else {
             vec![]
         };
-        let files = if !files.is_empty() {
-            once("-file".into())
-                .chain(files.into_iter().map(|path| path.into_os_string()))
-                .collect()
-        } else {
+        let files = if files.is_empty() {
             vec![]
+        } else {
+            once("-file".into())
+                .chain(files.into_iter().map(PathBuf::into_os_string))
+                .collect()
         };
 
         iwad.into_iter()

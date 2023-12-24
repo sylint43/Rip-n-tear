@@ -43,16 +43,16 @@ pub struct Cli {
     #[arg(long, short)]
     pistolstart: bool,
     /// Paths to PWads to use
-    #[arg(long, short, value_name = "PATH...")]
+    #[arg(long, short)]
     files: Vec<PathBuf>,
     /// Extra command line aruguments
-    #[arg(long, short, value_name = "EXTRA ARGS...")]
+    #[arg(long, short, value_name = "EXTRA ARGS")]
     extra: Vec<OsString>,
 }
 
 impl From<Cli> for DsdaArgs {
     fn from(value: Cli) -> Self {
-        DsdaArgs {
+        Self {
             iwad: value.iwad,
             warp: value.warp,
             renderer: value.renderer,
