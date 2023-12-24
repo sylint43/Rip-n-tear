@@ -24,21 +24,29 @@ use crate::dsda_doom::{Complevel, DsdaArgs, Renderer, Skill};
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 pub struct Cli {
+    /// Path to IWad to use
     #[arg(long)]
     iwad: PathBuf,
+    /// Warp to level at start
     #[arg(long, short)]
     warp: Option<u8>,
+    /// Set graphics renderer
     #[arg(long = "vid", short = 'v', value_enum)]
     renderer: Option<Renderer>,
+    /// Set skill level
     #[arg(long, short, value_enum)]
     skill: Option<Skill>,
+    /// Set compability level
     #[arg(long, short, value_enum)]
     complevel: Option<Complevel>,
+    /// Pistolstart after every level
     #[arg(long, short)]
     pistolstart: bool,
+    /// Paths to PWads to use
     #[arg(long, short)]
     files: Vec<PathBuf>,
-    #[arg(long, short)]
+    /// Extra command line aruguments
+    #[arg(long, short, value_name = "EXTRA ARGS")]
     extra: Vec<OsString>,
 }
 
