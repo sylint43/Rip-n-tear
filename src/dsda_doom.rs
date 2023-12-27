@@ -105,7 +105,7 @@ impl DsdaArgs {
 
         let iwad = vec!["-iwad".into(), iwad.into_os_string()];
         let warp = warp.map_or(vec![], |lvl| vec!["-warp".into(), lvl.to_string().into()]);
-        let renderer = renderer.map_or(vec![], |renderer| vec!["-vid".into(), renderer.into()]);
+        let renderer = renderer.map_or(vec![], |renderer| vec!["-vidmode".into(), renderer.into()]);
         let skill = skill.map_or(vec![], |skill| vec!["-skill".into(), skill.into()]);
         let complevel = complevel.map_or(vec![], |complevel| {
             vec!["-complevel".into(), complevel.into()]
