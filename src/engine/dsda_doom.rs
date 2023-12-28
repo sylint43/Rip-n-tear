@@ -26,7 +26,7 @@ pub(crate) struct DsdaDoom {
 }
 
 impl DsdaDoom {
-    pub fn new(args: DsdaArgs) -> Self {
+    pub(crate) fn new(args: DsdaArgs) -> Self {
         Self { args }
     }
 }
@@ -39,7 +39,7 @@ impl Engine for DsdaDoom {
     }
 }
 
-pub struct DsdaArgs {
+pub(crate) struct DsdaArgs {
     pub(crate) iwad: PathBuf,
     pub(crate) warp: Option<NonZeroU8>,
     pub(crate) renderer: Option<Renderer>,
