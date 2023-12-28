@@ -15,10 +15,29 @@
 // You should have received a copy of the GNU General Public License
 // along with rnt.  If not, see <http://www.gnu.org/licenses/>.
 
-use std::{ffi::OsString, iter::once, num::NonZeroU8, path::PathBuf};
+use std::{ffi::OsString, iter::once, num::NonZeroU8, path::PathBuf, process::Command};
 
 use clap::ValueEnum;
 
+use super::Engine;
+
+pub struct DsdaDoom {
+    args: DsdaArgs,
+}
+
+impl DsdaDoom {
+    pub fn new(args: DsdaArgs) -> Self {
+        Self { args }
+    }
+}
+
+impl Engine for DsdaDoom {
+    fn run(self) -> std::io::Result<std::process::ExitStatus> {
+        let args: Vec<OsString> = self.args.into();
+
+        Command::new("dsda-doom").args(args).status()
+    }
+}
 pub struct DsdaArgs {
     pub(crate) iwad: PathBuf,
     pub(crate) warp: Option<NonZeroU8>,

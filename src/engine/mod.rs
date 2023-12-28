@@ -15,4 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with rnt.  If not, see <http://www.gnu.org/licenses/>.
 
+use std::{io, process::ExitStatus};
+
 pub mod dsda_doom;
+
+pub trait Engine {
+    fn run(self) -> io::Result<ExitStatus>;
+}

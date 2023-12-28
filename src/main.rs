@@ -15,17 +15,16 @@
 // You should have received a copy of the GNU General Public License
 // along with rnt.  If not, see <http://www.gnu.org/licenses/>.
 
-use std::{ffi::OsString, process::Command};
-
 use clap::Parser;
-use rnt::{cli::Cli, engine::dsda_doom::DsdaArgs};
+use rnt::{
+    cli::Cli,
+    engine::{dsda_doom::DsdaDoom, Engine},
+};
 
 fn main() {
     let cli = Cli::parse();
-    let args: Vec<OsString> = DsdaArgs::from(cli).into();
 
-    Command::new("dsda-doom")
-        .args(args)
-        .status()
+    DsdaDoom::from(cli)
+        .run()
         .expect("Failed to launch dsda-doom");
 }

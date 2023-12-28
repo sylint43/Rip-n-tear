@@ -19,7 +19,7 @@ use std::{ffi::OsString, num::NonZeroU8, path::PathBuf};
 
 use clap::Parser;
 
-use crate::engine::dsda_doom::{Complevel, DsdaArgs, Renderer, Skill};
+use crate::engine::dsda_doom::{Complevel, DsdaArgs, DsdaDoom, Renderer, Skill};
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -50,9 +50,9 @@ pub struct Cli {
     extra: Vec<OsString>,
 }
 
-impl From<Cli> for DsdaArgs {
+impl From<Cli> for DsdaDoom {
     fn from(value: Cli) -> Self {
-        Self {
+        DsdaDoom::new(DsdaArgs {
             iwad: value.iwad,
             warp: value.warp,
             renderer: value.renderer,
@@ -61,7 +61,7 @@ impl From<Cli> for DsdaArgs {
             pistolstart: value.pistolstart,
             files: value.files,
             extra: value.extra,
-        }
+        })
     }
 }
 
