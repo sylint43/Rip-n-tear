@@ -20,14 +20,14 @@ use std::{ffi::OsString, iter::once, path::PathBuf};
 use clap::ValueEnum;
 
 pub struct DsdaArgs {
-    pub iwad: PathBuf,
-    pub warp: Option<u8>,
-    pub renderer: Option<Renderer>,
-    pub skill: Option<Skill>,
-    pub complevel: Option<Complevel>,
-    pub pistolstart: bool,
-    pub files: Vec<PathBuf>,
-    pub extra: Vec<OsString>,
+    pub(crate) iwad: PathBuf,
+    pub(crate) warp: Option<u8>,
+    pub(crate) renderer: Option<Renderer>,
+    pub(crate) skill: Option<Skill>,
+    pub(crate) complevel: Option<Complevel>,
+    pub(crate) pistolstart: bool,
+    pub(crate) files: Vec<PathBuf>,
+    pub(crate) extra: Vec<OsString>,
 }
 
 #[derive(Debug, Clone, Copy, ValueEnum)]
