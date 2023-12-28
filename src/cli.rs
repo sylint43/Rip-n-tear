@@ -19,7 +19,7 @@ use std::{ffi::OsString, num::NonZeroU8, path::PathBuf};
 
 use clap::Parser;
 
-use crate::dsda_doom::{Complevel, DsdaArgs, Renderer, Skill};
+use crate::engine::dsda_doom::{Complevel, DsdaArgs, Renderer, Skill};
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]

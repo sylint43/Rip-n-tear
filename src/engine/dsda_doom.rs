@@ -101,10 +101,9 @@ impl From<Complevel> for OsString {
     }
 }
 
-impl DsdaArgs {
-    #[must_use]
-    pub fn generate_arguments(self) -> Vec<OsString> {
-        let Self {
+impl From<DsdaArgs> for Vec<OsString> {
+    fn from(value: DsdaArgs) -> Self {
+        let DsdaArgs {
             iwad,
             warp,
             renderer,
@@ -113,7 +112,7 @@ impl DsdaArgs {
             pistolstart,
             files,
             extra,
-        } = self;
+        } = value;
 
         let iwad = vec!["-iwad".into(), iwad.into_os_string()];
         let warp = warp.map_or(vec![], |lvl| vec!["-warp".into(), lvl.to_string().into()]);
@@ -181,7 +180,7 @@ mod tests {
             "-extra",
         ];
 
-        let actual = args.generate_arguments();
+        let actual: Vec<OsString> = args.into();
 
         assert_eq!(actual, expected);
     }
@@ -200,7 +199,7 @@ mod tests {
         };
         let expected = ["-iwad", "doom2.wad"];
 
-        let actual = args.generate_arguments();
+        let actual: Vec<OsString> = args.into();
 
         assert_eq!(actual, expected);
     }
