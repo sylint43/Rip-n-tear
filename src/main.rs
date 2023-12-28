@@ -27,5 +27,7 @@ fn main() {
     Command::new("dsda-doom")
         .args(args)
         .spawn()
-        .expect("Failed to launch dsda-doom");
+        .expect("Failed to launch dsda-doom")
+        .wait()
+        .expect("DSDA-Doom wasn't running");
 }
