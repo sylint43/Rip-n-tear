@@ -21,7 +21,7 @@ use clap::ValueEnum;
 
 use super::Engine;
 
-pub struct DsdaDoom {
+pub(crate) struct DsdaDoom {
     args: DsdaArgs,
 }
 
@@ -38,6 +38,7 @@ impl Engine for DsdaDoom {
         Command::new("dsda-doom").args(args).status()
     }
 }
+
 pub struct DsdaArgs {
     pub(crate) iwad: PathBuf,
     pub(crate) warp: Option<NonZeroU8>,

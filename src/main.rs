@@ -16,15 +16,11 @@
 // along with rnt.  If not, see <http://www.gnu.org/licenses/>.
 
 use clap::Parser;
-use rnt::{
-    cli::Cli,
-    engine::{dsda_doom::DsdaDoom, Engine},
-};
+use rnt::{cli::Cli, engine::Engine};
 
 fn main() {
-    let cli = Cli::parse();
-
-    DsdaDoom::from(cli)
+    Cli::parse()
+        .to_engine()
         .run()
         .expect("Failed to launch dsda-doom");
 }
