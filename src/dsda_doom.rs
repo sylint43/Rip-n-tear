@@ -15,13 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with rnt.  If not, see <http://www.gnu.org/licenses/>.
 
-use std::{ffi::OsString, iter::once, path::PathBuf};
+use std::{ffi::OsString, iter::once, num::NonZeroU8, path::PathBuf};
 
 use clap::ValueEnum;
 
 pub struct DsdaArgs {
     pub(crate) iwad: PathBuf,
-    pub(crate) warp: Option<u8>,
+    pub(crate) warp: Option<NonZeroU8>,
     pub(crate) renderer: Option<Renderer>,
     pub(crate) skill: Option<Skill>,
     pub(crate) complevel: Option<Complevel>,
@@ -155,7 +155,7 @@ mod tests {
     fn test_should_generate_valid_dsda_cli_arguments() {
         let args = DsdaArgs {
             iwad: PathBuf::from("doom2.wad"),
-            warp: Some(1),
+            warp: Some(NonZeroU8::new(1).unwrap()),
             renderer: Some(Renderer::Software),
             skill: Some(Skill::Hard),
             complevel: Some(Complevel::Doom19),

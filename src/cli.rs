@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with rnt.  If not, see <http://www.gnu.org/licenses/>.
 
-use std::{ffi::OsString, path::PathBuf};
+use std::{ffi::OsString, num::NonZeroU8, path::PathBuf};
 
 use clap::Parser;
 
@@ -29,7 +29,7 @@ pub struct Cli {
     iwad: PathBuf,
     /// Warp to level at start
     #[arg(long, short, value_name = "LEVEL")]
-    warp: Option<u8>,
+    warp: Option<NonZeroU8>,
     /// Set graphics renderer
     #[arg(long = "vid", short = 'v', value_enum)]
     renderer: Option<Renderer>,
