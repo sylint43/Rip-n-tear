@@ -64,3 +64,14 @@ impl From<Cli> for DsdaArgs {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_cli() {
+        use clap::CommandFactory;
+        Cli::command().debug_assert();
+    }
+}
