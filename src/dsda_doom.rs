@@ -155,7 +155,7 @@ mod tests {
     fn test_should_generate_valid_dsda_cli_arguments() {
         let args = DsdaArgs {
             iwad: PathBuf::from("doom2.wad"),
-            warp: Some(NonZeroU8::new(1).unwrap()),
+            warp: NonZeroU8::new(1),
             renderer: Some(Renderer::Software),
             skill: Some(Skill::Hard),
             complevel: Some(Complevel::Doom19),
