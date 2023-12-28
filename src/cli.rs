@@ -49,7 +49,7 @@ pub struct Cli {
     #[arg(value_name = "PWADS")]
     files: Vec<PathBuf>,
     /// Extra command line aruguments
-    #[arg(long, short, value_name = "EXTRA ARGS")]
+    #[arg(value_name = "EXTRA ARGS", last = true, allow_hyphen_values = true)]
     extra: Vec<OsString>,
 }
 
