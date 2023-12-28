@@ -43,7 +43,7 @@ pub struct Cli {
     #[arg(long, short)]
     pistolstart: bool,
     /// Paths to PWads to use
-    #[arg(long, short)]
+    #[arg(value_name = "PWADS")]
     files: Vec<PathBuf>,
     /// Extra command line aruguments
     #[arg(long, short, value_name = "EXTRA ARGS")]

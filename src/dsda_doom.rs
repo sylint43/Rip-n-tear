@@ -32,36 +32,48 @@ pub struct DsdaArgs {
 
 #[derive(Debug, Clone, Copy, ValueEnum)]
 pub enum Renderer {
+    #[value(name = "sw", help = "Software rendering")]
     Software,
+    #[value(name = "gl", help = "Hardware rendering")]
     OpenGL,
 }
 
 #[derive(Debug, Clone, Copy, ValueEnum)]
 pub enum Skill {
+    #[value(help = "I'm too young to die")]
+    Baby,
+    #[value(help = "Hey, not too rough")]
     Easy,
+    #[value(help = "Hurt me plenty")]
     Medium,
+    #[value(help = "Ultra-Violence")]
     Hard,
-    VeryHard,
     Nightmare,
 }
 
 #[derive(Debug, Clone, Copy, ValueEnum)]
 pub enum Complevel {
+    #[value(name = "2", help = "Doom v1.9")]
     Doom19,
+    #[value(name = "3", help = "Ultimate Doom")]
     UDoom,
+    #[value(name = "4", help = "Final Doom")]
     FinalDoom,
+    #[value(name = "9", help = "Boom")]
     Boom,
+    #[value(name = "11", help = "MBF")]
     Mbf,
+    #[value(name = "21", help = "MBF21")]
     Mbf21,
 }
 
 impl From<Skill> for OsString {
     fn from(value: Skill) -> Self {
         match value {
-            Skill::Easy => "1".into(),
-            Skill::Medium => "2".into(),
-            Skill::Hard => "3".into(),
-            Skill::VeryHard => "4".into(),
+            Skill::Baby => "1".into(),
+            Skill::Easy => "2".into(),
+            Skill::Medium => "3".into(),
+            Skill::Hard => "4".into(),
             Skill::Nightmare => "5".into(),
         }
     }
@@ -145,7 +157,7 @@ mod tests {
             iwad: PathBuf::from("doom2.wad"),
             warp: Some(1),
             renderer: Some(Renderer::Software),
-            skill: Some(Skill::VeryHard),
+            skill: Some(Skill::Hard),
             complevel: Some(Complevel::Doom19),
             pistolstart: true,
             files: vec![PathBuf::from("test.wad"), PathBuf::from("test2.wad")],
@@ -156,7 +168,7 @@ mod tests {
             "doom2.wad",
             "-warp",
             "1",
-            "-vid",
+            "-vidmode",
             "sw",
             "-skill",
             "4",
