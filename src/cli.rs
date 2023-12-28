@@ -56,16 +56,18 @@ pub struct Cli {
 impl Cli {
     #[must_use]
     pub fn to_engine(self) -> impl Engine {
-        DsdaDoom::new(DsdaArgs {
-            iwad: self.iwad,
-            warp: self.warp,
-            renderer: self.renderer,
-            skill: self.skill,
-            complevel: self.complevel,
-            pistolstart: self.pistolstart,
-            files: self.files,
-            extra: self.extra,
-        })
+        DsdaDoom {
+            args: DsdaArgs {
+                iwad: self.iwad,
+                warp: self.warp,
+                renderer: self.renderer,
+                skill: self.skill,
+                complevel: self.complevel,
+                pistolstart: self.pistolstart,
+                files: self.files,
+                extra: self.extra,
+            },
+        }
     }
 }
 

@@ -22,13 +22,7 @@ use clap::ValueEnum;
 use super::Engine;
 
 pub(crate) struct DsdaDoom {
-    args: DsdaArgs,
-}
-
-impl DsdaDoom {
-    pub(crate) fn new(args: DsdaArgs) -> Self {
-        Self { args }
-    }
+    pub(crate) args: DsdaArgs,
 }
 
 impl Engine for DsdaDoom {
