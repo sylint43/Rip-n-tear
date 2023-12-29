@@ -55,7 +55,7 @@ pub struct Cli {
 
 impl Cli {
     #[must_use]
-    pub fn to_engine(self) -> impl Engine {
+    pub fn as_engine(self) -> impl Engine {
         DsdaDoom {
             args: DsdaArgs {
                 iwad: self.iwad,

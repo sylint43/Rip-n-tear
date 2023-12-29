@@ -20,7 +20,7 @@ use rnt::{cli::Cli, engine::Engine};
 
 fn main() {
     Cli::parse()
-        .to_engine()
+        .as_engine()
         .run()
         .expect("Failed to launch dsda-doom");
 }
