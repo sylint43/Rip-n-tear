@@ -17,55 +17,74 @@
 
 use std::{ffi::OsString, num::NonZeroU8, path::PathBuf};
 
-use clap::Parser;
+use clap::{Parser, Subcommand};
 
 use crate::engine::{
+    self,
     dsda_doom::{Complevel, DsdaArgs, DsdaDoom, Renderer, Skill},
-    Engine,
 };
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 pub struct Cli {
-    /// Path to IWad to use
-    #[arg(long)]
-    iwad: PathBuf,
-    /// Warp to level at start
-    #[arg(long, short, value_name = "LEVEL")]
-    warp: Option<NonZeroU8>,
-    /// Set graphics renderer
-    #[arg(long = "vid", short = 'v', value_enum)]
-    renderer: Option<Renderer>,
-    /// Set skill level
-    #[arg(long, short, value_enum)]
-    skill: Option<Skill>,
-    /// Set compability level
-    #[arg(long, short, value_enum)]
-    complevel: Option<Complevel>,
-    /// Pistolstart after every level
-    #[arg(long, short)]
-    pistolstart: bool,
-    /// Paths to PWads to use
-    #[arg(value_name = "PWADS")]
-    files: Vec<PathBuf>,
-    /// Extra command line aruguments
-    #[arg(value_name = "EXTRA ARGS", last = true, allow_hyphen_values = true)]
-    extra: Vec<OsString>,
+    #[command(subcommand)]
+    engine: Engine,
+}
+
+#[derive(Subcommand, Debug)]
+enum Engine {
+    DsdaDoom {
+        /// Path to IWad to use
+        #[arg(long)]
+        iwad: PathBuf,
+        /// Warp to level at start
+        #[arg(long, short, value_name = "LEVEL")]
+        warp: Option<NonZeroU8>,
+        /// Set graphics renderer
+        #[arg(long = "vid", short = 'v', value_enum)]
+        renderer: Option<Renderer>,
+        /// Set skill level
+        #[arg(long, short, value_enum)]
+        skill: Option<Skill>,
+        /// Set compability level
+        #[arg(long, short, value_enum)]
+        complevel: Option<Complevel>,
+        /// Pistolstart after every level
+        #[arg(long, short)]
+        pistolstart: bool,
+        /// Paths to PWads to use
+        #[arg(value_name = "PWADS")]
+        files: Vec<PathBuf>,
+        /// Extra command line aruguments
+        #[arg(value_name = "EXTRA ARGS", last = true, allow_hyphen_values = true)]
+        extra: Vec<OsString>,
+    },
 }
 
 impl Cli {
     #[must_use]
-    pub fn as_engine(self) -> impl Engine {
-        DsdaDoom {
-            args: DsdaArgs {
-                iwad: self.iwad,
-                warp: self.warp,
-                renderer: self.renderer,
-                skill: self.skill,
-                complevel: self.complevel,
-                pistolstart: self.pistolstart,
-                files: self.files,
-                extra: self.extra,
+    pub fn as_engine(self) -> impl engine::Engine {
+        match self.engine {
+            Engine::DsdaDoom {
+                iwad,
+                warp,
+                renderer,
+                skill,
+                complevel,
+                pistolstart,
+                files,
+                extra,
+            } => DsdaDoom {
+                args: DsdaArgs {
+                    iwad,
+                    warp,
+                    renderer,
+                    skill,
+                    complevel,
+                    pistolstart,
+                    files,
+                    extra,
+                },
             },
         }
     }
