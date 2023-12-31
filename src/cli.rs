@@ -21,7 +21,7 @@ use clap::{Parser, Subcommand};
 
 use crate::engine::{
     self,
-    dsda_doom::{Complevel, DsdaArgs, DsdaDoom, Renderer, Skill},
+    dsda_doom::{Complevel, DsdaDoom, Renderer, Skill},
 };
 
 #[derive(Parser, Debug)]
@@ -75,16 +75,14 @@ impl Cli {
                 complevel,
                 pistolstart,
             } => DsdaDoom {
-                args: DsdaArgs {
-                    iwad: self.iwad,
-                    warp: self.warp,
-                    renderer,
-                    skill: self.skill,
-                    complevel,
-                    pistolstart,
-                    files: self.files,
-                    extra: self.extra,
-                },
+                iwad: self.iwad,
+                warp: self.warp,
+                renderer,
+                skill: self.skill,
+                complevel,
+                pistolstart,
+                files: self.files,
+                extra: self.extra,
             },
         }
     }

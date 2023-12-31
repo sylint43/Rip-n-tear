@@ -22,18 +22,6 @@ use clap::ValueEnum;
 use super::Engine;
 
 pub(crate) struct DsdaDoom {
-    pub(crate) args: DsdaArgs,
-}
-
-impl Engine for DsdaDoom {
-    fn run(self) -> std::io::Result<std::process::ExitStatus> {
-        let args: Vec<OsString> = self.args.into();
-
-        Command::new("dsda-doom").args(args).status()
-    }
-}
-
-pub(crate) struct DsdaArgs {
     pub(crate) iwad: PathBuf,
     pub(crate) warp: Option<NonZeroU8>,
     pub(crate) renderer: Option<Renderer>,
@@ -42,6 +30,14 @@ pub(crate) struct DsdaArgs {
     pub(crate) pistolstart: bool,
     pub(crate) files: Vec<PathBuf>,
     pub(crate) extra: Vec<OsString>,
+}
+
+impl Engine for DsdaDoom {
+    fn run(self) -> std::io::Result<std::process::ExitStatus> {
+        let args: Vec<OsString> = self.into();
+
+        Command::new("dsda-doom").args(args).status()
+    }
 }
 
 #[derive(Debug, Clone, Copy, ValueEnum)]
@@ -115,9 +111,9 @@ impl From<Complevel> for OsString {
     }
 }
 
-impl From<DsdaArgs> for Vec<OsString> {
-    fn from(value: DsdaArgs) -> Self {
-        let DsdaArgs {
+impl From<DsdaDoom> for Vec<OsString> {
+    fn from(value: DsdaDoom) -> Self {
+        let DsdaDoom {
             iwad,
             warp,
             renderer,
@@ -166,7 +162,7 @@ mod tests {
 
     #[test]
     fn test_should_generate_valid_dsda_cli_arguments() {
-        let args = DsdaArgs {
+        let args = DsdaDoom {
             iwad: PathBuf::from("doom2.wad"),
             warp: NonZeroU8::new(1),
             renderer: Some(Renderer::Software),
@@ -201,7 +197,7 @@ mod tests {
 
     #[test]
     fn test_should_return_default_arguments() {
-        let args = DsdaArgs {
+        let args = DsdaDoom {
             iwad: PathBuf::from("doom2.wad"),
             warp: None,
             renderer: None,
